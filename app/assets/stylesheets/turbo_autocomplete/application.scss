@@ -17,6 +17,9 @@
         display: none !important;
       }
     }
+    .visible-input {
+      display: inline;
+    }
   }
 
   ul.list-group .list-group-item {
@@ -86,7 +89,7 @@
     outline: 0;
     padding: 0;
     width: auto;
-    display: inline; // Multi
+    display: none; // Multi
   }
 
   ul {

@@ -161,7 +161,9 @@ export default class Autocomplete extends Controller {
     if (this.prefetchValue && (!this.resultsShown)) {
       this.fetchResults()
     }
-    this.inputTarget.value = this.textValue;
+    if (!this.multipleValue) {
+      this.inputTarget.value = this.textValue;
+    }
     this.inputTarget.select()
 
     // Opening hint as results for the first time only
