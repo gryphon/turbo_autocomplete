@@ -1,0 +1,16 @@
+{
+  "name": "turbo_autocomplete",
+  "version": "1.0.0",
+  "description": "Turbo Editable Asset Files",
+  "main": "index.js",
+  "private": true,
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/gryphon/turbo_autocomplete.git"
+  },
+  "author": "Gryphon",
+  "license": "ISC",
+  "homepage": "https://github.com/gryphon/turbo_autocomplete",
+  "dependencies": {}
+}

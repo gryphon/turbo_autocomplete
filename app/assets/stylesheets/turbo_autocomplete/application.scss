@@ -1,0 +1,106 @@
+.autocomplete {
+
+  // for form-control behaviour:
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: auto !important;
+  line-height: 20px !important;
+
+  small {
+    color: #888;
+  }
+
+  &.focus {
+    .current-options {
+      span.prompt {
+        display: none !important;
+      }
+    }
+  }
+
+  ul.list-group .list-group-item {
+    white-space: nowrap;
+  }
+
+  .current-options {
+    // position: absolute;
+    z-index: 10;
+    display: inline; // Multiple
+    padding: 0px;
+    max-width: 100%;
+    cursor: text;
+
+    .current-option {
+      white-space: nowrap;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 5px;
+
+      i.cancel {
+        opacity: 0.2;
+        width: 20px;
+        text-align: center;
+        padding-top: 3px;
+        cursor: pointer;
+      }
+  
+      &:hover {
+        i.cancel {
+          opacity: 1;
+        }
+      }  
+ 
+  
+    }
+
+    .prompt {
+      display: none;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      // width: 100%;
+    } 
+
+    span.current-option:empty ~ i {
+      display: none
+    }
+
+    span.current-option.invisible ~ i {
+      display: none
+    }
+
+    span.selection:empty + span.prompt {
+      display: inline;
+    }
+
+    + .visible-input {
+      color: red;
+    }
+
+  }
+
+  input.visible-input {
+    border: 0;
+    outline: 0;
+    padding: 0;
+    width: auto;
+    display: inline; // Multi
+  }
+
+  ul {
+    position: absolute;
+    width: 100%;
+    z-index: 20000;
+    max-height: 300px;
+    left: 0;
+    margin-top: 6px;
+    overflow-x: scroll;
+  }
+
+  .hint {
+    color: #888;
+  }
+
+}
