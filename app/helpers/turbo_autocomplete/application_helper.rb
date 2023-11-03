@@ -37,11 +37,6 @@ module TurboAutocomplete
         &block
       )
     end
-  
-    def bank_autocomplete_data(bank)
-      { currency: bank.currency.code }
-    end
-  
 
   end
 end

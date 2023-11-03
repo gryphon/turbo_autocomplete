@@ -7,7 +7,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
     input_html_options[:data] ||= {}
     input_html_options[:data]["autocomplete-target"] = "hidden"
     input_html_options[:type] = "hidden"
-   
+
     # abort wrapper_options.inspect
 
     if options[:multiple]
@@ -17,9 +17,11 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
 
     url = options[:url]
 
+
     div_data = { controller: "autocomplete", 
                  'autocomplete-url-value': url, 
-                 'autocomplete-text-value': association_label }
+                 'autocomplete-text-value': association_label,
+                 'autocomplete-cancel-icon-value': cancel_icon }
     div_data[:action] = "click->autocomplete#onInputFocus"
     div_data[:action] += " #{options[:action]}" if options[:action]
     div_data[:action] = div_data[:action].strip
@@ -79,6 +81,11 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
       # We cannot find object as association
       # We will try to search in collection
       items = options[:collection].where(id: value).to_a
+
+      if items[0].nil?
+        return association_label
+      end
+      
       mn = items[0].model_name.plural
       mn = items[0].class.base_class.model_name.plural if items[0].class.base_class != items[0].class
 
@@ -124,9 +131,14 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
         end
 
       else
-        template.content_tag :li, I18n.t("type_first_letters"), class: "list-group-item hint", "aria-disabled": true
+        template.content_tag :li, I18n.t("autocomplete.type_first_letters"), class: "list-group-item hint", "aria-disabled": true
       end
     end
+  end
+
+  def cancel_icon
+    return "fa fa-times-circle" if TurboAutocomplete.configuration.icons_framework == :fa
+    return "bi bi-x-circle-fill" if TurboAutocomplete.configuration.icons_framework == :bi    
   end
 
   def current_option
@@ -143,7 +155,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
 
         # Placeholder for options
         items.each do |ah|
-          co += ah.nil? ? "" : '<span class="current-option" data-autocomplete-target="current">'+ah+'<i class="cancel fa fa-times-circle" data-action="click->autocomplete#cancel"></i></span>'.html_safe
+          co += ah.nil? ? "" : ('<span class="current-option" data-autocomplete-target="current">'+ah+'<i class="ps-1 cancel '+cancel_icon+'" data-action="click->autocomplete#cancel"></i></span>').html_safe
         end
 
         template.concat ('<span data-autocomplete-target="selection" class="selection">'+co+'</span>').html_safe
