@@ -19,6 +19,7 @@ module TurboAutocomplete
   
     def autocomplete_option(option, label: "logo", id: "id", data: {}, &block)
       id = "id" if id.nil?
+
       out_data = {
         'autocomplete-value': option.send(id),
         'autocomplete-label': option.send(label)

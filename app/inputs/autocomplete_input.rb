@@ -68,7 +68,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
         if object.send(reflection.name).class.name == "ActiveRecord::Associations::CollectionProxy"
           # i = "kek"
           object.send(reflection.name).collect do |r| 
-            i = "<input type=\"hidden\" name=\"#{object.model_name.singular}[#{attribute_name.to_s}][]\" value=\"#{r.to_param}\">"
+            i = "<input type=\"hidden\" name=\"#{object.model_name.singular}[#{attribute_name.to_s}][]\" value=\"#{r.id}\">"
             (template.render("#{mn}/autocomplete_item", item: r)+i.html_safe).html_safe
           end
         else
@@ -92,7 +92,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
       begin
 
         return items.collect do |r| 
-          i = "<input type=\"hidden\" name=\"#{object.model_name.singular}[#{attribute_name.to_s}][]\" value=\"#{r.to_param}\">"
+          i = "<input type=\"hidden\" name=\"#{object.model_name.singular}[#{attribute_name.to_s}][]\" value=\"#{r.id}\">"
           (template.render("#{mn}/autocomplete_item", item: r)+i.html_safe).html_safe
         end
 
@@ -160,9 +160,9 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
 
         template.concat ('<span data-autocomplete-target="selection" class="selection">'+co+'</span>').html_safe
 
-        if options[:prompt].present?
-          template.concat template.content_tag(:span, options[:prompt], class: "prompt")
-        end
+        # if options[:prompt].present?
+        template.concat template.content_tag(:span, options[:prompt], class: "prompt")
+        # end
 
         template.concat(visible_input)
       end

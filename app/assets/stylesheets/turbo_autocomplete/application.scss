@@ -75,7 +75,7 @@
     }
 
     span.selection:empty + span.prompt {
-      display: inline;
+      display: inline-block;
     }
 
     + .visible-input {

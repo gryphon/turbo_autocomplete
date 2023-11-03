@@ -229,7 +229,16 @@ export default class Autocomplete extends Controller {
     } else {
       this.textValue = ""
     }
+    
+    // Checking if item already selected
+    if (this.multipleValue && value) {
+      if (this.selectionTarget.querySelectorAll("input[value=\""+value+"\"]").length > 0) {
+        return
+      }
+    }
+    
     this.inputTarget.value = ""
+
 
     // Making change in selected option hidden input
     if (this.multipleValue) {
