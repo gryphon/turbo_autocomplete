@@ -167,9 +167,8 @@ export default class Autocomplete extends Controller {
     }
     this.inputTarget.select()
 
-    // Opening hint as results for the first time only
-    if (this.hasUrlValue && !this.prefetchValue && !this.hintShowed) {
-      this.hintShowed = true
+    // Opening hint as results there was no search only
+    if (this.hasUrlValue && !this.prefetchValue && !this.searchPerformed) {
       this.open()
     }
 
@@ -238,7 +237,6 @@ export default class Autocomplete extends Controller {
     }
     
     this.inputTarget.value = ""
-
 
     // Making change in selected option hidden input
     if (this.multipleValue) {
@@ -407,6 +405,7 @@ export default class Autocomplete extends Controller {
   }
 
   doFetch = async (url) => {
+    this.searchPerformed = true // For knowing that we now dont have prefetched items in results
     const response = await fetch(url, this.optionsForFetch())
     const html = await response.text()
     return html

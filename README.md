@@ -23,6 +23,14 @@ Use input instead association and provide collection to help input to recognize 
 
   = f.input :user_ids, as: :autocomplete, collection: User.all
 
+Collection from here will only be used to render selected option. It will not be used for options loading
+
+### Prefetch
+
+Use ```prefetched``` option to render some options before use interacted with select
+
+  = f.association :user, as: :autocomplete, prefetched: User.all
+
 ### Multiple
 
 Set ```multiple``` option to true to allow multiple values selection for your has_many associations

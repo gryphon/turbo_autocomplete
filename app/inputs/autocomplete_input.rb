@@ -17,7 +17,6 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
 
     url = options[:url]
 
-
     div_data = { controller: "autocomplete", 
                  'autocomplete-url-value': url, 
                  'autocomplete-text-value': association_label,
@@ -66,7 +65,6 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
       end
       begin
         if object.send(reflection.name).class.name == "ActiveRecord::Associations::CollectionProxy"
-          # i = "kek"
           object.send(reflection.name).collect do |r| 
             i = "<input type=\"hidden\" name=\"#{object.model_name.singular}[#{attribute_name.to_s}][]\" value=\"#{r.id}\">"
             (template.render("#{mn}/autocomplete_item", item: r)+i.html_safe).html_safe
@@ -109,17 +107,18 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
 
   private
 
+  # Drawing prefetched results
   def results_ul
     template.content_tag :ul, class: 'list-group', data: { 'autocomplete-target': "results" } do
-      if options[:url].blank? && !options[:collection].nil?
+      if !options[:prefetched].nil?
         # Rendering collection
 
-        o = options[:collection].model
+        o = options[:prefetched].model
         mn = o.model_name.plural
         mn = o.base_class.model_name.plural if o.base_class != o
 
         template.capture do
-          options[:collection].each do |item|
+          options[:prefetched].each do |item|
             o = template.autocomplete_option(item, label: "to_label", id: options[:value_method]) do
               template.render("#{mn}/autocomplete_item", item: item)
             rescue StandardError
@@ -161,7 +160,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
         template.concat ('<span data-autocomplete-target="selection" class="selection">'+co+'</span>').html_safe
 
         # if options[:prompt].present?
-        template.concat template.content_tag(:span, options[:prompt], class: "prompt")
+        template.concat template.content_tag(:span, (options[:prompt].presence || "Select..."), class: "prompt")
         # end
 
         template.concat(visible_input)
