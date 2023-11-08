@@ -31,6 +31,10 @@ Use ```prefetched``` option to render some options before use interacted with se
 
   = f.association :user, as: :autocomplete, prefetched: User.all
 
+Use ```prefetch``` switch to tell autocomplete load values from URL after user interacted the select
+
+  = f.association :user, as: :autocomplete, prefetch: true
+
 ### Multiple
 
 Set ```multiple``` option to true to allow multiple values selection for your has_many associations
