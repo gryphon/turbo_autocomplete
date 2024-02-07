@@ -35,11 +35,14 @@
     cursor: text;
 
     .current-option {
-      white-space: nowrap;
       flex: 1;
       overflow: hidden;
       text-overflow: ellipsis;
       padding-right: 5px;
+
+      .current-value {
+        max-width: 250px;
+      }
 
       i.cancel {
         opacity: 0.2;

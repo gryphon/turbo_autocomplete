@@ -113,7 +113,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
     # Using collection as prefetched values if there is no URL
     options[:prefetched] = options[:collection] if options[:url].blank?
 
-    template.content_tag :ul, class: 'list-group', data: { 'autocomplete-target': "results" } do
+    template.content_tag :ul, class: 'list-group', data: { 'autocomplete-target': "results" }, hidden: true do
       if !options[:prefetched].nil?
         # Rendering collection
 
@@ -158,7 +158,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
 
         # Placeholder for options
         items.each do |ah|
-          co += ah.nil? ? "" : ('<span class="current-option" data-autocomplete-target="current">'+ah+'<i class="ps-1 cancel '+cancel_icon+'" data-action="click->autocomplete#cancel"></i></span>').html_safe
+          co += ah.nil? ? "" : ('<span class="current-option d-flex" data-autocomplete-target="current"><div class="nowrap current-value overflow-hidden text-truncate">'+ah+'</div><i class="ps-1 d-block cancel '+cancel_icon+'" data-action="click->autocomplete#cancel"></i></span>').html_safe
         end
 
         template.concat ('<span data-autocomplete-target="selection" class="selection">'+co+'</span>').html_safe
