@@ -76,6 +76,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
         association_label
       end
     elsif !options[:collection].nil? && !value.nil?
+
       # We cannot find object as association
       # We will try to search in collection
       items = options[:collection].where(id: value).to_a
