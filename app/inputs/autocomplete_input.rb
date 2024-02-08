@@ -113,7 +113,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
     # Using collection as prefetched values if there is no URL
     options[:prefetched] = options[:collection] if options[:url].blank?
 
-    template.content_tag :ul, class: 'list-group', data: { 'autocomplete-target': "results" }, hidden: true do
+    template.content_tag :ul, class: 'list-group text-start', data: { 'autocomplete-target': "results" }, hidden: true do
       if !options[:prefetched].nil?
         # Rendering collection
 
