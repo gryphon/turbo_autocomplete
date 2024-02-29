@@ -6,8 +6,8 @@ Modern simple_form autocomplte input based on Stimulus and Turbo for Rails 7 app
 
 * Add helpers to your application controller: ```helper TurboAutocomplete::Engine.helpers```
 * Add NPM module ```turbo_autocomplete```
-* Add CSS: ```@import 'turbo_auticomplete/app/assets/stylesheets/turbo_auticomplete/application.scss';```
-* Add JS: ```import AutocompleteController from "turbo_autocomplete/app/javascript/controllers/autocomplete.js"; application.register("autocomplete", AutocompleteController)```
+* Add CSS: ```@import 'turbo_autocomplete/app/assets/stylesheets/turbo_autocomplete/application.scss';```
+* Add JS: ```import AutocompleteController from "turbo_autocomplete/app/javascript/controllers/autocomplete_controller.js"; application.register("autocomplete", AutocompleteController)```
 
 ## Usage
 
