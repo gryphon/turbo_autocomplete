@@ -165,7 +165,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
         template.concat ('<span data-autocomplete-target="selection" class="selection">'+co+'</span>').html_safe
 
         # if options[:prompt].present?
-        template.concat template.content_tag(:span, (options[:prompt].presence || "Select..."), class: "prompt")
+        template.concat template.content_tag(:span, (options[:prompt].presence || I18n.t("autocomplete.select")), class: "prompt")
         # end
 
         template.concat(visible_input)
