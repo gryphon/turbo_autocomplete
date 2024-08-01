@@ -1,7 +1,7 @@
 {
   "name": "turbo_autocomplete",
   "version": "1.0.0",
-  "description": "Turbo Editable Asset Files",
+  "description": "Turbo Autocomplete Asset Files",
   "main": "index.js",
   "private": true,
   "scripts": {},
