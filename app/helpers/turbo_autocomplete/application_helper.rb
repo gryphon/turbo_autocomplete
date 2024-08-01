@@ -1,10 +1,10 @@
 module TurboAutocomplete
   module ApplicationHelper
 
-    def autocomplete(collection, &block)
+    def autocomplete(collection, limit: 20, &block)
 
       # To ensure limitations for performance
-      collection = collection.limit(20)
+      collection = collection.limit(limit)
   
       if collection.length.zero?
         content_tag(:button, t("not_found"), class: %w[list-group-item list-group-item-action disabled], data: {message: "autocomplete_no_options_found"})
@@ -22,9 +22,10 @@ module TurboAutocomplete
 
       out_data = {
         'autocomplete-value': option.send(id),
-        'autocomplete-label': option.send(label)
+        'autocomplete-label': option.send(label),
+        'autocomplete-model': option.model_name.to_s
       }
-  
+
       out_data = out_data.merge(data)
   
       m = "#{option.model_name.singular}_autocomplete_data"

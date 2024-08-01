@@ -4,7 +4,7 @@ const optionSelector = "[role='option']:not([aria-disabled])"
 const activeSelector = "[aria-selected='true']"
 
 export default class Autocomplete extends Controller {
-  static targets = ["input", "hidden", "results", "current", "selection"]
+  static targets = ["input", "hidden", "model", "results", "current", "selection"]
   static classes = ["selected"]
   static values = {
     ready: Boolean,
@@ -221,10 +221,12 @@ export default class Autocomplete extends Controller {
     }
 
     let value = ""
+    let model = ""
 
     if (selected) {
       this.textValue = selected.getAttribute("data-autocomplete-label") || selected.textContent.trim()
       value = selected.getAttribute("data-autocomplete-value") || this.textValue
+      model = selected.getAttribute("data-autocomplete-model")
     } else {
       this.textValue = ""
     }
@@ -247,6 +249,11 @@ export default class Autocomplete extends Controller {
       this.hiddenTarget.dispatchEvent(new Event("change"))
     } else {
       this.inputTarget.value = ""
+    }
+
+    if (this.hasModelTarget) {
+      this.modelTarget.value = model
+      this.modelTarget.disabled = !model
     }
 
     this.inputTarget.focus()

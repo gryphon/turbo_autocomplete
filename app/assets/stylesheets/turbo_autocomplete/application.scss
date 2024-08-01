@@ -1,4 +1,4 @@
-.autocomplete {
+.turbo-autocomplete {
 
   // for form-control behaviour:
   position: relative;
@@ -40,15 +40,15 @@
       text-overflow: ellipsis;
       padding-right: 5px;
 
-      .current-value {
-        max-width: 250px;
-      }
-
       i.cancel {
         opacity: 0.2;
         width: 20px;
         text-align: center;
         cursor: pointer;
+      }
+
+      i.cancel.fa {
+        padding-top: 2px;
       }
   
       &:hover {

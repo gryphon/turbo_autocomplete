@@ -15,6 +15,11 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
       input_html_options[:name] = object.model_name.singular+"["+attribute_name.to_s+"][]" 
     end
 
+    if options[:polymorphic]
+      input_html_options[:value] = object.send(attribute_name)&.id
+      input_html_options[:name] = "#{object_name}[#{attribute_name}_id]" 
+    end
+
     url = options[:url]
 
     div_data = { controller: "autocomplete", 
@@ -33,9 +38,11 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
       div_data["autocomplete-multiple-value"] = true
     end
 
-    root_classes = ["autocomplete form-select"]
+    root_classes = ["turbo-autocomplete form-select"]
     root_classes << wrapper_options[:error_class] if has_errors?
     root_classes.push("form-select-sm") if input_html_options[:class].include? "input-sm"
+
+    
 
     template.content_tag :div, class: root_classes, data: div_data do
       input = super(wrapper_options) # leave StringInput do the real rendering
@@ -48,12 +55,18 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
     if !object.nil? && !reflection.nil? && !object.send(reflection.name).nil?
       #  object.send(attribute_name).id
       object.send(reflection.name).to_s
-    elsif !options[:collection].nil? && !value.nil?
-      options[:collection].where(id: value).first.to_s
+    elsif (!options[:collection].nil? || options[:polymorphic]) && !value.nil?
+      if options[:polymorphic]
+        value.to_s
+      else
+        options[:collection].where(id: value).first.to_s
+      end
     end
   end
 
   def association_html
+
+    # This is regular association with reflection passed
     if !object.nil? && !reflection.nil? && !object.send(reflection.name).nil?
       #  object.send(attribute_name).id
       o = object.send(reflection.name)
@@ -75,11 +88,15 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
       rescue StandardError
         association_label
       end
-    elsif !options[:collection].nil? && !value.nil?
+    elsif (!options[:collection].nil? || options[:polymorphic]) && !value.nil?
 
-      # We cannot find object as association
-      # We will try to search in collection
-      items = options[:collection].where(id: value).to_a
+      if options[:polymorphic]
+        items = [object.send(attribute_name)]
+      else
+        # We cannot find object as association
+        # We will try to search in collection
+        items = options[:collection].where(id: value).to_a
+      end
 
       if items[0].nil?
         return association_label
@@ -162,13 +179,15 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
           co += ah.nil? ? "" : ('<span class="current-option d-flex" data-autocomplete-target="current"><div class="nowrap current-value overflow-hidden text-truncate">'+ah+'</div><i class="ps-1 d-block cancel '+cancel_icon+'" data-action="click->autocomplete#cancel"></i></span>').html_safe
         end
 
-        template.concat ('<span data-autocomplete-target="selection" class="selection">'+co+'</span>').html_safe
+        template.concat(('<span data-autocomplete-target="selection" class="selection">'+co+'</span>').html_safe)
 
         # if options[:prompt].present?
         template.concat template.content_tag(:span, (options[:prompt].presence || I18n.t("autocomplete.select")), class: "prompt")
         # end
 
         template.concat(visible_input)
+
+        template.concat(model_input)
       end
     end
   end
@@ -179,11 +198,20 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
     end
   end
 
+  def model_input 
+    return nil if !options[:polymorphic]
+    v = object.send(attribute_name)&.model_name
+    template.content_tag :input, name: "#{object_name}[#{attribute_name}_type]", disabled: v.blank?, type: 'hidden', value: v,
+                                 data: { 'autocomplete-target': "model" } do
+    end
+  end
+
   def set_html_options; end
 
   def value
     v = object.send(attribute_name) if object.respond_to?(attribute_name) || object.is_a?(Ransack::Search)
     v = v.to_date rescue v = nil if v.is_a?(String)
+    # return v&.id if options[:polymorphic]
     v
   end
 
