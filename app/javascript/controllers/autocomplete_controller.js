@@ -268,9 +268,11 @@ export default class Autocomplete extends Controller {
           this.selectionTarget.innerHTML = null;
         }
 
+        console.log("SELECTED", selected)
+
         let hidden_option = ''
         if (this.multipleValue) hidden_option = '<input type="hidden" name="'+this.hiddenTarget.getAttribute('name')+'" value="'+value+'">'
-        let option = '<span class="current-option d-flex" data-autocomplete-target="current"><div class="nowrap overflow-hidden text-truncate">'+hidden_option+selected.innerHTML+'</div><i class="cancel d-block ps-1 '+this.cancelIconValue+'" data-action="click->autocomplete#cancel"></i></span>'
+        let option = '<span class="current-option d-flex" data-autocomplete-target="current">'+hidden_option+selected.outerHTML+'<i class="cancel d-block ps-1 '+this.cancelIconValue+'" data-action="click->autocomplete#cancel"></i></span>'
         this.selectionTarget.insertAdjacentHTML("beforeend", option)
       } else {
         this.selectionTarget.innerHTML = null;

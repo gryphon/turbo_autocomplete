@@ -22,8 +22,20 @@
     }
   }
 
+  //Older syntax
   ul.list-group .list-group-item {
     white-space: nowrap;
+    &.list-group-item-action {
+      cursor: pointer;
+    }
+  }
+
+  // Newer syntax
+  ul.dropdown-menu .dropdown-item {
+    white-space: nowrap;
+    &.dropdown-item-action {
+      cursor: pointer;
+    }
   }
 
   .current-options {
@@ -39,6 +51,15 @@
       overflow: hidden;
       text-overflow: ellipsis;
       padding-right: 5px;
+
+      .current-value {
+        &.oneliner {
+          max-width: 250px;
+        }
+        &.multiliner {
+          width: 100%;
+        }
+      }
 
       i.cancel {
         opacity: 0.2;
@@ -102,6 +123,7 @@
     left: 0;
     margin-top: 6px;
     overflow-x: scroll;
+    scrollbar-width: thin;
   }
 
   .hint {

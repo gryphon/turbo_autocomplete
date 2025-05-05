@@ -131,7 +131,8 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
     # Using collection as prefetched values if there is no URL
     options[:prefetched] = options[:collection] if options[:url].blank?
 
-    template.content_tag :ul, class: 'list-group text-start', data: { 'autocomplete-target': "results" }, hidden: true do
+    # template.content_tag :ul, class: 'list-group text-start', data: { 'autocomplete-target': "results" }, hidden: true do
+    template.content_tag :ul, class: 'dropdown-menu show text-start', data: { 'autocomplete-target': "results" }, hidden: true do
       if !options[:prefetched].nil?
         # Rendering collection
 
@@ -141,18 +142,14 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
 
         template.capture do
           options[:prefetched].each do |item|
-            o = template.autocomplete_option(item, label: "to_label", id: options[:value_method]) do
-              template.render("#{mn}/autocomplete_item", item: item)
-            rescue StandardError
-              item.to_s
-            end
-
+            o = template.render("#{mn}/autocomplete_item", item: item) rescue item.to_s
             template.concat o
           end
         end
 
       else
-        template.content_tag :li, I18n.t("autocomplete.type_first_letters"), class: "list-group-item hint", "aria-disabled": true
+        template.content_tag :li, I18n.t("autocomplete.type_first_letters"), class: "dropdown-item hint", "aria-disabled": true
+        # template.content_tag :li, I18n.t("autocomplete.type_first_letters"), class: "list-group-item hint", "aria-disabled": true
       end
     end
   end
@@ -160,6 +157,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
   def cancel_icon
     return "fa fa-times-circle" if TurboAutocomplete.configuration.icons_framework == :fa
     return "bi bi-x-circle-fill" if TurboAutocomplete.configuration.icons_framework == :bi    
+    return "ti ti-circle-x" if TurboAutocomplete.configuration.icons_framework == :ti    
   end
 
   def current_option
@@ -176,7 +174,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
 
         # Placeholder for options
         items.each do |ah|
-          co += ah.nil? ? "" : ('<span class="current-option d-flex" data-autocomplete-target="current"><div class="nowrap current-value overflow-hidden text-truncate">'+ah+'</div><i class="ps-1 d-block cancel '+cancel_icon+'" data-action="click->autocomplete#cancel"></i></span>').html_safe
+          co += ah.nil? ? "" : ('<span class="current-option d-flex" data-autocomplete-target="current">'+ah+'<i class="ps-1 d-block cancel '+cancel_icon+'" data-action="click->autocomplete#cancel"></i></span>').html_safe
         end
 
         template.concat(('<span data-autocomplete-target="selection" class="selection">'+co+'</span>').html_safe)
