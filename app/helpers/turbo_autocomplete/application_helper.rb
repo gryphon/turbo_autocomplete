@@ -22,7 +22,7 @@ module TurboAutocomplete
       id = "id" if id.nil?
 
       out_data = {
-        'autocomplete-value': option.send(id),
+        'autocomplete-value': option.send(id).to_s,
         'autocomplete-label': option.send(label),
         'autocomplete-model': option.model_name.to_s
       }

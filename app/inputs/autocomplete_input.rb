@@ -59,7 +59,11 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
       if options[:polymorphic]
         value.to_s
       else
-        options[:collection].where(id: value).first.to_s
+        if options[:collection].respond_to?(:where)
+          options[:collection].where(options[:value_method] => value).first.to_s
+        else
+          options[:collection].find{|i| i.send(options[:value_method]) == value}&.to_s
+        end
       end
     end
   end
@@ -80,10 +84,10 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
         if object.send(reflection.name).class.name == "ActiveRecord::Associations::CollectionProxy"
           object.send(reflection.name).collect do |r| 
             i = "<input type=\"hidden\" name=\"#{object.model_name.singular}[#{attribute_name.to_s}][]\" value=\"#{r.id}\">"
-            (template.render("#{mn}/autocomplete_item", item: r)+i.html_safe).html_safe
+            (template.render(autocomplete_item_template(mn), item: r)+i.html_safe).html_safe
           end
         else
-          template.render("#{mn}/autocomplete_item", item: object.send(reflection.name))
+          template.render(autocomplete_item_template(mn), item: object.send(reflection.name))
         end
       rescue StandardError
         association_label
@@ -95,7 +99,12 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
       else
         # We cannot find object as association
         # We will try to search in collection
-        items = options[:collection].where(id: value).to_a
+        
+        if options[:collection].respond_to?(:where)
+          items = options[:collection].where(options[:value_method] => value).to_a
+        else
+          items = options[:collection].find{|i| i.send(options[:value_method]) == value}
+        end
       end
 
       if items[0].nil?
@@ -109,10 +118,10 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
 
         return items.collect do |r| 
           i = "<input type=\"hidden\" name=\"#{object.model_name.singular}[#{attribute_name.to_s}][]\" value=\"#{r.id}\">"
-          (template.render("#{mn}/autocomplete_item", item: r)+i.html_safe).html_safe
+          (template.render(autocomplete_item_template(mn), item: r)+i.html_safe).html_safe
         end
 
-        template.render("#{mn}/autocomplete_item", item: item)
+        template.render(autocomplete_item_template(mn), item: item)
       rescue StandardError
         association_label
       end
@@ -125,6 +134,12 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
 
   private
 
+  def autocomplete_item_template mn
+    namespace = (template.controller.class.module_parent == Object) ? nil : template.controller.class.module_parent.to_s.underscore.to_sym
+    return "#{namespace}/#{mn}/autocomplete_item" if template.lookup_context.exists?("autocomplete_item", ["#{namespace}/#{mn}"], true)
+    "#{mn}/autocomplete_item"
+  end
+
   # Drawing prefetched results
   def results_ul
 
@@ -136,13 +151,14 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
       if !options[:prefetched].nil?
         # Rendering collection
 
-        o = options[:prefetched].model
-        mn = o.model_name.plural
-        mn = o.base_class.model_name.plural if o.base_class != o
-
         template.capture do
           options[:prefetched].each do |item|
-            o = template.render("#{mn}/autocomplete_item", item: item) rescue item.to_s
+
+            o = item.class
+            mn = o.model_name.plural
+            mn = o.base_class.model_name.plural if o.base_class != o
+
+            o = template.render(autocomplete_item_template(mn), item: item, options: options.slice(:value_method))# rescue item.to_s
             template.concat o
           end
         end
@@ -174,7 +190,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
 
         # Placeholder for options
         items.each do |ah|
-          co += ah.nil? ? "" : ('<span class="current-option d-flex" data-autocomplete-target="current">'+ah+'<i class="ps-1 d-block cancel '+cancel_icon+'" data-action="click->autocomplete#cancel"></i></span>').html_safe
+          co += ah.nil? ? "" : ('<span class="current-option d-flex" data-autocomplete-target="current">'+ah.to_s+'<i class="ps-1 d-block cancel '+cancel_icon+'" data-action="click->autocomplete#cancel"></i></span>').html_safe
         end
 
         template.concat(('<span data-autocomplete-target="selection" class="selection">'+co+'</span>').html_safe)
@@ -184,6 +200,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
         # end
 
         template.concat(visible_input)
+        # abort visible_input.inspect
 
         template.concat(model_input)
       end
