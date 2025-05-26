@@ -103,11 +103,12 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
         if options[:collection].respond_to?(:where)
           items = options[:collection].where(options[:value_method] => value).to_a
         else
-          items = options[:collection].find{|i| i.send(options[:value_method]) == value}
+          values = value.is_a?(Array) ? value : [value]
+          items = options[:collection].filter{|i| values.include?(i.send(options[:value_method]).to_s)}
         end
       end
 
-      if items[0].nil?
+      if items.nil? || items[0].nil?
         return association_label
       end
       
@@ -118,10 +119,10 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
 
         return items.collect do |r| 
           i = "<input type=\"hidden\" name=\"#{object.model_name.singular}[#{attribute_name.to_s}][]\" value=\"#{r.id}\">"
-          (template.render(autocomplete_item_template(mn), item: r)+i.html_safe).html_safe
+          (template.render(autocomplete_item_template(mn), item: r, options: options)+i.html_safe).html_safe
         end
 
-        template.render(autocomplete_item_template(mn), item: item)
+        template.render(autocomplete_item_template(mn), item: item, options: options)
       rescue StandardError
         association_label
       end
