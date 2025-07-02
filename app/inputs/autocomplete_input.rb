@@ -118,7 +118,7 @@ class AutocompleteInput < SimpleForm::Inputs::StringInput
       begin
 
         return items.collect do |r| 
-          i = "<input type=\"hidden\" name=\"#{object.model_name.singular}[#{attribute_name.to_s}][]\" value=\"#{r.id}\">"
+          i = "<input type=\"hidden\" name=\"#{object.model_name.singular}[#{attribute_name.to_s}][]\" value=\"#{r.send(options[:value_method])}\">"
           (template.render(autocomplete_item_template(mn), item: r, options: options)+i.html_safe).html_safe
         end
 
